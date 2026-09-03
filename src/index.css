@@ -1,0 +1,92 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Work+Sans:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-paper text-charcoal font-body antialiased;
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-display text-ink;
+  }
+
+  ::selection {
+    background-color: #C79A4B;
+    color: #0F1E1A;
+  }
+
+  :focus-visible {
+    outline: 2px solid #C79A4B;
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold tracking-wide transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .btn-primary {
+    @apply btn bg-ink text-paper hover:bg-pine-700 active:scale-[0.98];
+  }
+  .btn-gold {
+    @apply btn bg-gold text-ink hover:bg-gold-dark hover:text-paper active:scale-[0.98];
+  }
+  .btn-outline {
+    @apply btn border border-ink/20 text-ink bg-transparent hover:bg-ink hover:text-paper;
+  }
+  .btn-ghost {
+    @apply btn bg-transparent text-ink hover:bg-ink/5;
+  }
+  .btn-danger {
+    @apply btn bg-transparent border border-red-300 text-red-600 hover:bg-red-50;
+  }
+
+  .input {
+    @apply w-full rounded-xl border border-line bg-white/70 px-4 py-3 text-sm text-charcoal placeholder:text-muted focus:border-pine-500 focus:ring-2 focus:ring-pine-100 outline-none transition-colors;
+  }
+
+  .label {
+    @apply mb-1.5 block text-xs font-semibold uppercase tracking-wider text-muted;
+  }
+
+  .card {
+    @apply rounded-xl2 bg-white border border-line/70 shadow-card;
+  }
+
+  .eyebrow {
+    @apply text-xs font-semibold uppercase tracking-[0.2em] text-gold-dark;
+  }
+
+  .horizon-rule {
+    @apply h-px w-16 bg-horizon;
+  }
+
+  .container-page {
+    @apply mx-auto w-full max-w-7xl px-5 sm:px-8;
+  }
+
+  .skeleton {
+    @apply animate-pulse rounded-lg bg-ink/10;
+  }
+}
