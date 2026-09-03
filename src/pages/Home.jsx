@@ -1,12 +1,25 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ShieldCheck, CalendarClock, BadgePercent, Undo2, ArrowRight } from 'lucide-react';
+import {
+  ShieldCheck,
+  CalendarClock,
+  BadgePercent,
+  Undo2,
+  ArrowRight,
+} from 'lucide-react';
 import SearchBar from '../components/SearchBar';
 import HotelCard, { HotelCardSkeleton } from '../components/HotelCard';
 import { EmptyState } from '../components/States';
 import { hotelApi } from '../api/hotelApi';
 
-const FEATURED_CITIES = ['Mumbai', 'Goa', 'Jaipur', 'Bengaluru', 'Udaipur', 'Manali'];
+const FEATURED_CITIES = [
+  'Mumbai',
+  'Goa',
+  'Jaipur',
+  'Bengaluru',
+  'Udaipur',
+  'Manali',
+];
 
 export default function Home() {
   const [featured, setFeatured] = useState(null);
@@ -14,24 +27,28 @@ export default function Home() {
 
   useEffect(() => {
     let cancelled = false;
+
     setFeatured(null);
-    const today = new Date();
-    const start = new Date(today);
-    start.setDate(start.getDate() + 14);
-    const end = new Date(start);
-    end.setDate(end.getDate() + 2);
 
     hotelApi
-      .search({
+      .browse({
         city: featuredCity,
-        startDate: start.toISOString().slice(0, 10),
-        endDate: end.toISOString().slice(0, 10),
-        roomCount: 1,
         page: 0,
         size: 6,
       })
-      .then((data) => !cancelled && setFeatured(data))
-      .catch(() => !cancelled && setFeatured({ content: [], empty: true }));
+      .then((data) => {
+        if (!cancelled) {
+          setFeatured(data);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setFeatured({
+            content: [],
+            empty: true,
+          });
+        }
+      });
 
     return () => {
       cancelled = true;
@@ -49,16 +66,24 @@ export default function Home() {
             className="h-full w-full object-cover"
           />
         </div>
+
         <div className="container-page relative flex flex-col items-start gap-8 py-20 sm:py-28">
-          <p className="eyebrow">Stayora — beautiful places to stay</p>
+          <p className="eyebrow">
+            Stayora — beautiful places to stay
+          </p>
+
           <h1 className="max-w-2xl font-display text-4xl leading-tight text-paper sm:text-6xl">
             Find your next stay.
           </h1>
+
           <p className="horizon-rule" />
+
           <p className="max-w-lg text-base text-paper/70 sm:text-lg">
-            Discover beautiful places, flexible stays and unforgettable experiences.
+            Discover beautiful places, flexible stays and unforgettable
+            experiences.
           </p>
         </div>
+
         <div className="container-page relative -mt-6 pb-16 sm:-mt-10">
           <SearchBar />
         </div>
@@ -71,6 +96,7 @@ export default function Home() {
             <p className="eyebrow">Handpicked</p>
             <h2 className="mt-1 text-3xl">Featured stays</h2>
           </div>
+
           <div className="flex flex-wrap gap-2">
             {FEATURED_CITIES.map((city) => (
               <button
@@ -96,8 +122,11 @@ export default function Home() {
           </div>
         ) : featured.content?.length ? (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {featured.content.map((hp) => (
-              <HotelCard key={hp.hotel.id} hotelPrice={hp} />
+            {featured.content.map((hotel) => (
+              <HotelCard
+                key={hotel.id}
+                hotel={hotel}
+              />
             ))}
           </div>
         ) : (
@@ -118,7 +147,11 @@ export default function Home() {
       <section className="bg-pine-50/60 py-16">
         <div className="container-page">
           <p className="eyebrow">Where to next</p>
-          <h2 className="mt-1 text-3xl">Popular destinations</h2>
+
+          <h2 className="mt-1 text-3xl">
+            Popular destinations
+          </h2>
+
           <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
             {FEATURED_CITIES.map((city, i) => (
               <Link
@@ -130,9 +163,13 @@ export default function Home() {
                   src={`https://source.unsplash.com/collection/1163637/300x300?sig=${i}`}
                   alt={city}
                   className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  onError={(e) => (e.currentTarget.style.opacity = 0)}
+                  onError={(e) => {
+                    e.currentTarget.style.opacity = 0;
+                  }}
                 />
+
                 <div className="absolute inset-0 bg-gradient-to-t from-ink/70 via-ink/0" />
+
                 <span className="absolute bottom-3 left-3 font-display text-base text-paper">
                   {city}
                 </span>
@@ -145,23 +182,30 @@ export default function Home() {
       {/* Why Stayora */}
       <section className="container-page py-16">
         <p className="eyebrow">Why Stayora</p>
-        <h2 className="mt-1 text-3xl">Booking, done properly.</h2>
+
+        <h2 className="mt-1 text-3xl">
+          Booking, done properly.
+        </h2>
+
         <div className="mt-10 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
           <ValueProp
             icon={<ShieldCheck size={22} />}
             title="Secure booking"
             body="Every payment is verified server-side before a stay is ever confirmed."
           />
+
           <ValueProp
             icon={<CalendarClock size={22} />}
             title="Flexible stays"
             body="Search real availability across your exact dates and room count."
           />
+
           <ValueProp
             icon={<BadgePercent size={22} />}
             title="Transparent pricing"
             body="Prices reflect live availability and demand — no hidden markups."
           />
+
           <ValueProp
             icon={<Undo2 size={22} />}
             title="Easy cancellation"
@@ -173,7 +217,10 @@ export default function Home() {
       {/* CTA */}
       <section className="bg-ink py-16">
         <div className="container-page flex flex-col items-center gap-5 text-center">
-          <h2 className="text-3xl text-paper sm:text-4xl">Ready for your next getaway?</h2>
+          <h2 className="text-3xl text-paper sm:text-4xl">
+            Ready for your next getaway?
+          </h2>
+
           <Link to="/hotels" className="btn-gold">
             Start exploring <ArrowRight size={16} />
           </Link>
@@ -189,8 +236,14 @@ function ValueProp({ icon, title, body }) {
       <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-full bg-pine-50 text-pine-600">
         {icon}
       </div>
-      <h3 className="font-display text-lg text-ink">{title}</h3>
-      <p className="mt-1.5 text-sm leading-relaxed text-muted">{body}</p>
+
+      <h3 className="font-display text-lg text-ink">
+        {title}
+      </h3>
+
+      <p className="mt-1.5 text-sm leading-relaxed text-muted">
+        {body}
+      </p>
     </div>
   );
 }

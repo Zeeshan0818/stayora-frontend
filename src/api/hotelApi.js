@@ -1,14 +1,14 @@
 import axiosClient from './axiosClient';
 
 export const hotelApi = {
-  search: ({
-    city,
-    startDate,
-    endDate,
-    roomCount,
-    page = 0,
-    size = 10,
-  }) =>
+  browse: ({ city = '', page = 0, size = 9 } = {}) =>
+    axiosClient
+      .get('/hotels', {
+        params: { city, page, size },
+      })
+      .then((r) => r.data.data),
+
+  search: ({ city, startDate, endDate, roomCount, page = 0, size = 10 }) =>
     axiosClient
       .get('/hotels/search', {
         params: {
