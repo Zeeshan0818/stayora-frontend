@@ -4,6 +4,11 @@ export const adminApi = {
   createHotel: (hotelDto) =>
     axiosClient.post('/admin/hotels', hotelDto).then((r) => r.data.data),
 
+  updateHotel: (hotelId, hotelDto) =>
+    axiosClient
+      .put(`/admin/hotels/${hotelId}`, hotelDto)
+      .then((r) => r.data.data),
+
   updateRoom: (hotelId, roomId, roomDto) =>
     axiosClient
       .put(`/admin/hotels/${hotelId}/rooms/${roomId}`, roomDto)
