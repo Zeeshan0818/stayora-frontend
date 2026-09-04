@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { Plus, Trash2, MapPin, Pencil } from 'lucide-react';
+import { Plus, Trash2, MapPin, Pencil, CheckCircle } from 'lucide-react';
 import { adminApi } from '../../api/adminApi';
 import { toFriendlyError } from '../../api/axiosClient';
 import { PageSpinner, ErrorState, EmptyState } from '../../components/States';
@@ -14,6 +14,7 @@ export default function AdminHotelDetail() {
   const [hotel, setHotel] = useState(null);
   const [rooms, setRooms] = useState(null);
   const [error, setError] = useState('');
+  const [activating, setActivating] = useState(false);
 
   const load = () => {
     setError('');
@@ -29,7 +30,28 @@ export default function AdminHotelDetail() {
       .catch((err) => setError(toFriendlyError(err)));
   };
 
-  useEffect(load, [hotelId]);
+  useEffect(() => {
+    load();
+  }, [hotelId]);
+
+  const handleActivate = async () => {
+    if (!window.confirm('Activate this hotel?')) return;
+
+    setActivating(true);
+
+    try {
+      await adminApi.activateHotel(hotelId);
+
+      toast.success('Hotel activated successfully.');
+
+      // Reload hotel so the UI shows the updated status
+      load();
+    } catch (err) {
+      toast.error(toFriendlyError(err));
+    } finally {
+      setActivating(false);
+    }
+  };
 
   const handleDeleteRoom = async (roomId) => {
     if (!window.confirm('Delete this room type?')) return;
@@ -62,14 +84,47 @@ export default function AdminHotelDetail() {
             <MapPin size={14} />
             {hotel.city}
           </p>
+
+          {/* Hotel Status */}
+          <div className="mt-2">
+            {hotel.active ? (
+              <span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700">
+                <CheckCircle size={13} />
+                Active
+              </span>
+            ) : (
+              <span className="inline-flex rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700">
+                Not Active
+              </span>
+            )}
+          </div>
         </div>
 
-        <Link
-          to={`/admin/hotels/${hotelId}/edit`}
-          className="btn-outline"
-        >
-          Edit hotel
-        </Link>
+        {/* Hotel Actions */}
+        <div className="flex flex-wrap gap-2">
+
+          {/* Activate Hotel */}
+          {!hotel.active && (
+            <button
+              onClick={handleActivate}
+              disabled={activating}
+              className="btn-primary"
+            >
+              <CheckCircle size={16} />
+              {activating ? 'Activating…' : 'Activate hotel'}
+            </button>
+          )}
+
+          {/* Edit Hotel */}
+          <Link
+            to={`/admin/hotels/${hotelId}/edit`}
+            className="btn-outline"
+          >
+            <Pencil size={16} />
+            Edit hotel
+          </Link>
+
+        </div>
       </div>
 
       {/* Rooms Header */}
